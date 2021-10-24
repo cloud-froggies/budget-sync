@@ -1,1 +1,1 @@
-# sinchronization-lambda
+# budget-sync
