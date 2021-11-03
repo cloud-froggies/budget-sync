@@ -92,7 +92,7 @@ def lambda_handler(event, context):
             table.put_item(
                 Item={
                     "campaign_id":str(item['id']),
-                    "budget":Decimal(item['budget'])
+                    "budget":Decimal(str(item['budget']))
                 },
                 ConditionExpression='attribute_not_exists(campaign_id)'
             )
@@ -105,7 +105,7 @@ def lambda_handler(event, context):
                     },
                     UpdateExpression="SET budget = :B",            
                     ConditionExpression="budget <> :B",
-                    ExpressionAttributeValues={':B': item['budget'] }
+                    ExpressionAttributeValues={':B': Decimal(str(item['budget'])) }
                 )
                 logger.debug(f"update: {item['id']}")
     
