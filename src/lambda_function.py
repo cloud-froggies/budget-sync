@@ -91,7 +91,7 @@ def lambda_handler(event, context):
             table.put_item(
                 Item={
                     "campaign_id":item['id'],
-                    "budget":item['budget']
+                    "budget":Decimal(item['budget'])
                 },
                 ConditionExpression='attribute_not_exists(campaign_id)'
             )
