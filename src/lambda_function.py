@@ -85,28 +85,28 @@ def lambda_handler(event, context):
     #             "balance": Decimal(0)
     #         })
     
-    with table.batch_writer() as batch:
-        for item in sql_data:
-            try:
-                batch.put_item(
-                    Item={
-                        "campaign_id":item['id'],
-                        "budget":item['budget']
+    # with table.batch_writer() as batch:
+    for item in sql_data:
+        try:
+            table.put_item(
+                Item={
+                    "campaign_id":item['id'],
+                    "budget":item['budget']
+                },
+                ConditionExpression='attribute_not_exists(campaign_id)'
+            )
+            logger.debug(f"created: {item['id']}")
+        except botocore.exceptions.ClientError as e:
+            if e.response['Error']['Code'] != 'ConditionalCheckFailedException':
+                table.update_item(
+                    key={
+                        'campaign_id' : item['id']
                     },
-                    ConditionExpression='attribute_not_exists(campaign_id)'
+                    UpdateExpression="SET budget = :B",            
+                    ConditionExpression="budget <> :B",
+                    ExpressionAttributeValues={':B': item['budget'] }
                 )
-                logger.debug(f"created: {item['id']}")
-            except botocore.exceptions.ClientError as e:
-                if e.response['Error']['Code'] != 'ConditionalCheckFailedException':
-                    batch.update_item(
-                        key={
-                            'campaign_id' : item['id']
-                        },
-                        UpdateExpression="SET budget = :B",            
-                        ConditionExpression="budget <> :B",
-                        ExpressionAttributeValues={':B': item['budget'] }
-                    )
-                    logger.debug(f"update: {item['id']}")
+                logger.debug(f"update: {item['id']}")
     
 
     
