@@ -86,6 +86,7 @@ def lambda_handler(event, context):
     #         })
     
     # with table.batch_writer() as batch:
+    print(sql_data)
     for item in sql_data:
         try:
             table.put_item(
