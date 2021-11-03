@@ -109,7 +109,7 @@ def lambda_handler(event, context):
                 logger.debug(f"update: {item['id']}")
     
 
-    
+lambda_handler("","")
         
                 
 
