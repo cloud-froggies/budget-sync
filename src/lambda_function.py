@@ -90,7 +90,7 @@ def lambda_handler(event, context):
         try:
             table.put_item(
                 Item={
-                    "campaign_id":item['id'],
+                    "campaign_id":str(item['id']),
                     "budget":Decimal(item['budget'])
                 },
                 ConditionExpression='attribute_not_exists(campaign_id)'
@@ -100,7 +100,7 @@ def lambda_handler(event, context):
             if e.response['Error']['Code'] != 'ConditionalCheckFailedException':
                 table.update_item(
                     key={
-                        'campaign_id' : item['id']
+                        'campaign_id' : str(item['id'])
                     },
                     UpdateExpression="SET budget = :B",            
                     ConditionExpression="budget <> :B",
