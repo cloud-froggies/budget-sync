@@ -105,6 +105,8 @@ def lambda_handler(event, context):
                     print('update')
 
                     table.update_item(
+                    
+                    
                         key={
                             'campaign_id' : str(item['id'])
                         },
