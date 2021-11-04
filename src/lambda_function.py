@@ -109,7 +109,7 @@ def lambda_handler(event, context):
                             'campaign_id' : str(item['id'])
                         },
                         UpdateExpression="SET budget = :B",            
-                        ConditionExpression="budget <> :B",
+                        ConditionExpression="budget NOT :B",
                         ExpressionAttributeValues={':B': {"N": str(item['id'])} }
                     )
                     print(f"update: {item['id']}")
