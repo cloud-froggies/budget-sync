@@ -124,7 +124,7 @@ def lambda_handler(event, context):
                 ConditionExpression="NOT campaign_id IN (:arr)",
                 ExpressionAttributeValues={':arr': {'SS':sql_keys}}
             )
-            print(f"deleted: {item['id']}")
+            print(f"deleted: {item['campaign_id']}")
         except botocore.exceptions.ClientError as e:
             print(e)
                 
