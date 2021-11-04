@@ -110,7 +110,7 @@ def lambda_handler(event, context):
                         },
                         UpdateExpression="SET budget = :B",            
                         ConditionExpression="NOT budget = :B",
-                        ExpressionAttributeValues={':B': {"N": str(item['budget'])} }
+                        ExpressionAttributeValues={':B': Decimal(str(item['budget']) )}
                     )
                     print(f"update: {item['id']}")
                 except botocore.exceptions.ClientError as e:
