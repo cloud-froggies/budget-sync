@@ -105,9 +105,7 @@ def lambda_handler(event, context):
                     print('update')
 
                     table.update_item(
-                    
-                    
-                        key={
+                        Key={
                             'campaign_id' : str(item['id'])
                         },
                         UpdateExpression="SET budget = :B",            
