@@ -89,6 +89,7 @@ def lambda_handler(event, context):
     print(sql_data)
     for item in sql_data:
         try:
+            print('put')
             table.put_item(
                 Item={
                     "campaign_id":str(item['id']),
@@ -99,6 +100,7 @@ def lambda_handler(event, context):
             )
             logger.debug(f"created: {item['id']}")
         except botocore.exceptions.ClientError as e:
+            print('update')
             if e.response['Error']['Code'] != 'ConditionalCheckFailedException':
                 table.update_item(
                     key={
