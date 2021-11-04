@@ -98,10 +98,11 @@ def lambda_handler(event, context):
                 },
                 ConditionExpression='attribute_not_exists(campaign_id)'
             )
-            logger.debug(f"created: {item['id']}")
+            print(f"created: {item['id']}")
         except botocore.exceptions.ClientError as e:
-            print('update')
             if e.response['Error']['Code'] != 'ConditionalCheckFailedException':
+                print('update')
+
                 table.update_item(
                     key={
                         'campaign_id' : str(item['id'])
@@ -110,7 +111,7 @@ def lambda_handler(event, context):
                     ConditionExpression="budget <> :B",
                     ExpressionAttributeValues={':B': {"N": str(item['id'])} }
                 )
-                logger.debug(f"update: {item['id']}")
+                print(f"update: {item['id']}")
     
 
 lambda_handler("","")
