@@ -88,6 +88,7 @@ def lambda_handler(event, context):
     # with table.batch_writer() as batch:
     print(sql_data)
     sql_keys = [str(i['id'] )for i in sql_data]
+    print(sql_keys)
     for item in sql_data:
         try:
             table.put_item(
@@ -116,7 +117,8 @@ def lambda_handler(event, context):
                     print(e)
 
     for item in dynamo_data:
-        if(item not in sql_keys):
+        print(item)
+        if(item['campaign_id'] not in sql_keys):
             try:
                 table.delete_item(
                     Key={
