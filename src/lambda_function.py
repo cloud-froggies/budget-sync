@@ -100,18 +100,22 @@ def lambda_handler(event, context):
             )
             print(f"created: {item['id']}")
         except botocore.exceptions.ClientError as e:
-            if e.response['Error']['Code'] != 'ConditionalCheckFailedException':
-                print('update')
+                print(e)
+                try:
+                    print('update')
 
-                table.update_item(
-                    key={
-                        'campaign_id' : str(item['id'])
-                    },
-                    UpdateExpression="SET budget = :B",            
-                    ConditionExpression="budget <> :B",
-                    ExpressionAttributeValues={':B': {"N": str(item['id'])} }
-                )
-                print(f"update: {item['id']}")
+                    table.update_item(
+                        key={
+                            'campaign_id' : str(item['id'])
+                        },
+                        UpdateExpression="SET budget = :B",            
+                        ConditionExpression="budget <> :B",
+                        ExpressionAttributeValues={':B': {"N": str(item['id'])} }
+                    )
+                    print(f"update: {item['id']}")
+                except botocore.exceptions.ClientError as e:
+                    print(e)
+                    
     
 
 lambda_handler("","")
