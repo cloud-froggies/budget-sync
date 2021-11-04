@@ -18,19 +18,19 @@ db_name = "configuration"
 
 dynamo_table = "budgets"   
 
-# def scanRecursive(table):
-#     """
-#     NOTE: Anytime you are filtering by a specific equivalency attribute such as id, name 
-#     or date equal to ... etc., you should consider using a query not scan
+def scanRecursive(table):
+    """
+    NOTE: Anytime you are filtering by a specific equivalency attribute such as id, name 
+    or date equal to ... etc., you should consider using a query not scan
 
-#     kwargs are any parameters you want to pass to the scan operation
-#     """
-#     response = table.scan()
-#     data = response.get('Items')
-#     while 'LastEvaluatedKey' in response:
-#         response = table.scan(ExclusiveStartKey=response['LastEvaluatedKey'])
-#         data.extend(response['Items'])
-#     return data
+    kwargs are any parameters you want to pass to the scan operation
+    """
+    response = table.scan()
+    data = response.get('Items')
+    while 'LastEvaluatedKey' in response:
+        response = table.scan(ExclusiveStartKey=response['LastEvaluatedKey'])
+        data.extend(response['Items'])
+    return data
 
 
 # Handler
@@ -55,7 +55,7 @@ def lambda_handler(event, context):
     if not (sql_data := cursor.fetchall()):
         raise Exception('No existe el advertiser o campaign.')
     
-    # dynamo_data = scanRecursive(table)
+    dynamo_data = scanRecursive(table)
     # from operator import itemgetter
 
     # sorted_sql = sorted(sql_data, key=itemgetter('id')) 
@@ -87,9 +87,9 @@ def lambda_handler(event, context):
     
     # with table.batch_writer() as batch:
     print(sql_data)
+    sql_keys = [i['id'] for i in sql_data]
     for item in sql_data:
         try:
-            print('put')
             table.put_item(
                 Item={
                     "campaign_id":str(item['id']),
@@ -100,7 +100,6 @@ def lambda_handler(event, context):
             )
             print(f"created: {item['id']}")
         except botocore.exceptions.ClientError as e:
-                print(e)
                 try:
                     print('update')
 
@@ -115,7 +114,17 @@ def lambda_handler(event, context):
                     print(f"update: {item['id']}")
                 except botocore.exceptions.ClientError as e:
                     print(e)
-                    
+
+    for item in dynamo_data:
+        table.delete_item(
+            Key={
+                    'campaign_id' : str(item['campaign_id'])
+                },
+            ConditionExpression="campaign_id NOT IN :arr",
+            ExpressionAttributeValues={':arr': {'SS':sql_keys}}
+        )
+        print(f"deleted: {item['id']}")
+                
     
 
 lambda_handler("","")
