@@ -87,7 +87,7 @@ def lambda_handler(event, context):
     
     # with table.batch_writer() as batch:
     print(sql_data)
-    sql_keys = [i['id'] for i in sql_data]
+    sql_keys = [str(i['id'] )for i in sql_data]
     for item in sql_data:
         try:
             table.put_item(
@@ -126,7 +126,7 @@ def lambda_handler(event, context):
             )
             print(f"deleted: {item['id']}")
         except botocore.exceptions.ClientError as e:
-            pass
+            print(e)
                 
     
 
