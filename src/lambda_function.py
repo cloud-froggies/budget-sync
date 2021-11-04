@@ -121,7 +121,7 @@ def lambda_handler(event, context):
                 Key={
                         'campaign_id' : str(item['campaign_id'])
                     },
-                ConditionExpression="campaign_id NOT IN :arr",
+                ConditionExpression="NOT campaign_id IN :arr",
                 ExpressionAttributeValues={':arr': {'SS':sql_keys}}
             )
             print(f"deleted: {item['id']}")
