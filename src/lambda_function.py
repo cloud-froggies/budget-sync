@@ -117,7 +117,7 @@ def lambda_handler(event, context):
                     print(e)
 
     for item in dynamo_data:
-        print(item)
+        print(item['campaign_id'] not in sql_keys)
         if(item['campaign_id'] not in sql_keys):
             try:
                 table.delete_item(
