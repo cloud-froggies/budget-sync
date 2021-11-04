@@ -116,17 +116,16 @@ def lambda_handler(event, context):
                     print(e)
 
     for item in dynamo_data:
-        try:
-            table.delete_item(
-                Key={
-                        'campaign_id' : str(item['campaign_id'])
-                    },
-                ConditionExpression="NOT :arr contains campaign_id",
-                ExpressionAttributeValues={':arr': {'SS':sql_keys}}
-            )
-            print(f"deleted: {item['campaign_id']}")
-        except botocore.exceptions.ClientError as e:
-            print(e)
+        if(item not in sql_keys):
+            try:
+                table.delete_item(
+                    Key={
+                            'campaign_id' : str(item['campaign_id'])
+                        }
+                )
+                print(f"deleted: {item['campaign_id']}")
+            except botocore.exceptions.ClientError as e:
+                print(e)
                 
     
 
